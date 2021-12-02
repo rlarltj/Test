@@ -1,68 +1,73 @@
 <template>
-<div>
-  <img alt="logo" src="./assets/logo.png" class="main-logo"/>
-<div class="menu">
-  <a href="login"> 로그인 </a>
-  <a href="home"> Home </a>
-  <router-link to="/shop" @click="card=true; banner=true; receipt=false">Shop</router-link>
-  <a href="about"> About </a>
-  <a href="logout"> 로그아웃 </a>
-
-</div>
+  <div>
+    <img alt="logo" src="./assets/logo.png" class="main-logo"/>
+    <div class="menu">
+      <a href="login" v-if="!login"> 로그인 </a>
+      <a href="home"> Home </a>
+      <router-link to="/shop" @click="card=true; banner=true; receipt=false">Shop</router-link>
+      <a href="about"> About </a>
+      <a v-if="login" href="login" @click="login=false"> 로그아웃 </a>
+    </div>
 
 <!-- @makeTrue="card=true; banner=true" :card="card" :banner="banner" -->
-<router-view></router-view>
+  <router-view @makeTrue="card=true, banner=true" @loginTrue="login=true" :login="login"></router-view>
 
-<div v-if="banner">
-  <!-- shop 버튼을 클릭할 경우 상단 고정 Banner 등장 -->
-<Banner />
-</div>
+  <div v-if="banner">
+    <!-- shop 버튼을 클릭할 경우 상단 고정 Banner 등장 -->
+    <Banner />
+  </div>
 
-<div v-if="card">
-  <!-- card가 true면 가격순정렬, 되돌리기 버튼과 Card Component가 화면에 렌더링됩니다.
-  card의 기본값은 default며 메뉴의 shop을 클릭하면 true가 됩니다. -->
-<div class="button-Con">
-<button @click="priceSort()">가격순정렬</button>
-<button @click="sortReturn()">되돌리기</button>
-</div>
-<div class="grid">
-<Card @openModal="Modal = true; 클릭한물건= i" :물건="물건데이터[i]" v-for="(a,i) in 5" :key="i"/>
-</div>
+  <div v-if="card">
+    <!-- card가 true면 가격순정렬, 되돌리기 버튼과 Card Component가 화면에 렌더링됩니다.
+    card의 기본값은 default며 메뉴의 shop을 클릭하면 true가 됩니다. -->
+    <div class="button-Con">
+      <button @click="priceSort()">가격순정렬</button>
+      <button @click="sortReturn()">되돌리기</button>
+    </div>
+    <div class="grid">
+      <Card @openModal="Modal = true; 클릭한물건= i" :물건="물건데이터[i]" v-for="(a,i) in 5" :key="i"/>
+  </div>
 </div>
 
 
 <!-- 제품을 클릭할 경우 나타나는 상세페이지(Modal)입니다.  -->
-<transition name="fade">
-<div class="black-bg" v-if="Modal">
-  <div class="white-bg">
-    <button @click="Modal=false" class="exitBtn"></button>
-    <img :src="물건데이터[클릭한물건].image" class="modalImg">
-    <h4>{{ 물건데이터[클릭한물건].title }}</h4>
-    <p>{{ 물건데이터[클릭한물건].content }}</p>
-    <Banner />
-    <input @input="month = $event.target.value"  placeholder="수량을 입력하세요" >
-    <p> {{month}} 개 : {{ 물건데이터[클릭한물건].price * month}} 원</p>
-    <h5>최소 인원: {{물건데이터[클릭한물건].min}}</h5>
-    <router-link to="/cart" @click="Modal=false; card=false; banner=false; receipt=true" ><button> 입금하기!!</button></router-link>
-  </div>
-</div>
-</transition>
+  <transition name="fade">
+    <div class="black-bg" v-if="Modal">
+      <div class="white-bg">
+        <button @click="Modal=false" class="exitBtn"></button>
+        <img :src="물건데이터[클릭한물건].image" class="modalImg">
+        <h4>{{ 물건데이터[클릭한물건].title }}</h4>
+        <p>{{ 물건데이터[클릭한물건].content }}</p>
+        <Banner />
+        <input @input="month = $event.target.value"  placeholder="수량을 입력하세요" >
+        <p> {{month}} 개 : {{ 물건데이터[클릭한물건].price * month}} 원</p>
+        <h5>최소 인원: {{물건데이터[클릭한물건].min}}</h5>
+        <router-link to="/cart" @click="Modal=false; card=false; banner=false; receipt=true" ><button> 입금하기!!</button></router-link>
+      </div>
+    </div>
+  </transition>
 
 <!-- 상세페이지에서 입금하기 버튼을 클릭하면 receipt가 true되어 receipt-container가 뜹니다. -->
-<div v-if="receipt" class="receipt-container">
-  <div>
-    <img :src="물건데이터[클릭한물건].image" class="receipt-image">
-      <button @click="month++">+</button>
-  <button @click="month= month-1">-</button>
-  </div> 
-  <div class="receipt-box">{{물건데이터[클릭한물건].title}}
-  <div class="receipt-text">
-    <div>{{month}}개</div>
-    <div>총 {{ 물건데이터[클릭한물건].price * month}}원입니다. </div>
-    <div> 우리은행 1002-261-123456(김린)으로 입금해주세요!</div>
-  </div>
-  </div>
-
+    <div v-if="receipt" class="receipt-container">
+      <div>
+        <img :src="물건데이터[클릭한물건].image" class="receipt-image">
+        <button @click="month++">+</button>
+        <button @click="month= month-1">-</button>
+      </div> 
+      <div class="receipt-box">{{물건데이터[클릭한물건].title}}
+        <div class="receipt-text">
+          <div>
+            {{month}}개<br>
+            총 {{ 물건데이터[클릭한물건].price * month}}원입니다. <br>
+            <div> 구매하시겠습니까?</div>
+          <button style="margin-right: 20px" @click="account=true">네</button><button @click="account=false">아니요</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+  <div v-if="account">
+    <h3>우리은행 1002-261-123456(김린)으로 입금해주세요!</h3>
   </div>
 </div>
 </template>
@@ -76,6 +81,7 @@ export default {
   name: 'App',
   data(){                     
     return{
+      login:false,
       month: 1,
       클릭한물건: 0,
       물건데이터: data,
@@ -84,6 +90,7 @@ export default {
       card: false,
       banner: false,
       receipt: false,
+      account: false,
     }
   },
   watch :{
@@ -119,8 +126,16 @@ export default {
 </script>
 
 <style>
+@font-face {
+  font-family: 'Y_Spotlight';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts-20-12@1.0/Y_Spotlight.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
 .main-logo{
   height: 250px;
+  margin: 0 0 50px 0;
 }
 .menu {
   background : rgba(0,0,0,0.09);
@@ -131,11 +146,12 @@ export default {
 .menu a {
  color:#05499f;
   padding: 0 15px 0 15px;
+  margin: 0 2rem 0 2rem;
   font-weight: bold;
   font-size: 20px;
 }
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'Y_Spotlight', Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
@@ -226,6 +242,11 @@ div {
   flex-direction: row;
   justify-content: center;
   text-align: center;
+  padding: 3rem;
+  font-size: 2rem;
+}
+.receipt-image {
+  max-width: 100%;
 }
 .receipt-box{
   display: flex;
@@ -237,6 +258,8 @@ div {
 .receipt-text{
   color: #132452; 
   font-weight: bold;
-  font-size: 30px;
+  font-weight: bold;
+  margin-top: 3rem;
+  padding: 0 2rem;
 }
 </style>

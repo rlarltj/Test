@@ -7,7 +7,7 @@
     <form>
       <input type="text" id="login" class="fadeIn second" name="login" placeholder="아이디를 입력하세요">
       <input type="text" id="password" class="fadeIn third" name="login" placeholder="비밀번호를 입력하세요">
-      <input type="submit" class="fadeIn fourth" value="로그인">
+      <router-link to="/home"><input type="submit" class="fadeIn fourth" value="로그인" @click="$emit('loginTrue', true)" /></router-link>
     </form>
     <div id="formFooter">
       <a class="underlineHover" href="join">회원가입</a>
@@ -17,7 +17,11 @@
 </div>
 </template>
 <script>
-
+  export default{
+    props:{
+      login: Boolean,
+    },
+  }
 </script>
 
 <style>
