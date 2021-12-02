@@ -2,16 +2,16 @@
   <div>
     <img alt="logo" src="./assets/logo.png" class="main-logo"/>
     <div class="menu">
+      <!-- login -->
       <a href="login" v-if="!login"> 로그인 </a>
       <a href="home"> Home </a>
       <router-link to="/shop" @click="card=true; banner=true; receipt=false">Shop</router-link>
       <a href="about"> About </a>
       <a v-if="login" href="login" @click="login=false"> 로그아웃 </a>
     </div>
-
+  
 <!-- @makeTrue="card=true; banner=true" :card="card" :banner="banner" -->
   <router-view @makeTrue="card=true, banner=true" @loginTrue="login=true" :login="login"></router-view>
-
   <div v-if="banner">
     <!-- shop 버튼을 클릭할 경우 상단 고정 Banner 등장 -->
     <Banner />
@@ -39,8 +39,8 @@
         <h4>{{ 물건데이터[클릭한물건].title }}</h4>
         <p>{{ 물건데이터[클릭한물건].content }}</p>
         <Banner />
-        <input @input="month = $event.target.value"  placeholder="수량을 입력하세요" >
-        <p> {{month}} 개 : {{ 물건데이터[클릭한물건].price * month}} 원</p>
+        <input @input="개수 = $event.target.value"  placeholder="수량을 입력하세요" >
+        <p> {{개수}} 개 : {{ 물건데이터[클릭한물건].price * 개수}} 원</p>
         <h5>최소 인원: {{물건데이터[클릭한물건].min}}</h5>
         <router-link to="/cart" @click="Modal=false; card=false; banner=false; receipt=true" ><button> 입금하기!!</button></router-link>
       </div>
@@ -51,14 +51,14 @@
     <div v-if="receipt" class="receipt-container">
       <div>
         <img :src="물건데이터[클릭한물건].image" class="receipt-image">
-        <button @click="month++">+</button>
-        <button @click="month= month-1">-</button>
+        <button @click="개수++">+</button>
+        <button @click="개수= 개수-1">-</button>
       </div> 
       <div class="receipt-box">{{물건데이터[클릭한물건].title}}
         <div class="receipt-text">
           <div>
-            {{month}}개<br>
-            총 {{ 물건데이터[클릭한물건].price * month}}원입니다. <br>
+            {{개수}}개<br>
+            총 {{ 물건데이터[클릭한물건].price * 개수}}원입니다. <br>
             <div> 구매하시겠습니까?</div>
           <button style="margin-right: 20px" @click="account=true">네</button><button @click="account=false">아니요</button>
           </div>
@@ -82,7 +82,7 @@ export default {
   data(){                     
     return{
       login:false,
-      month: 1,
+      개수: 1,
       클릭한물건: 0,
       물건데이터: data,
       물건데이터2: [...data],
@@ -94,14 +94,14 @@ export default {
     }
   },
   watch :{
-    month(a){
+    개수(a){
        if (isNaN(a) == true){
         alert('숫자를 입력하세요');
-        this.month = 1;
+        this.개수 = 1;
        }
         else if(a<1){
           alert('한개부터 구매 가능합니다.');
-          this.month = 1;
+          this.개수 = 1;
         }
     }
   },
@@ -113,14 +113,12 @@ export default {
   },  
     sortReturn(){
       this.물건데이터 = [...this.물건데이터2];
-    }
-    
+  },
+
   },
   components: {
     Banner: Banner,
-    // Modal: Modal,
     Card: Card,
-    
   }
 }
 </script>

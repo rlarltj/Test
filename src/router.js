@@ -7,6 +7,10 @@ import About from './About.vue'
 
 const routes = [
   {
+    path: "/",
+    component: Login,
+  },
+  {
     path: "/login",
     component: Login,
   },
