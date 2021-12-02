@@ -27,7 +27,7 @@
     <div class="grid">
       <Card @openModal="Modal = true; 클릭한물건= i" :물건="물건데이터[i]" v-for="(a,i) in 5" :key="i"/>
   </div>
-</div>
+  </div>
 
 
 <!-- 제품을 클릭할 경우 나타나는 상세페이지(Modal)입니다.  -->
