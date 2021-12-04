@@ -7,7 +7,7 @@
       <a href="home"> Home </a>
       <router-link to="/shop" @click="card=true; banner=true; receipt=false">Shop</router-link>
       <a href="about"> About </a>
-      <a v-if="login" href="login" @click="login=false"> 로그아웃 </a>
+      <a v-if="login" href="home" @click="login=false"> 로그아웃 </a>
     </div>
   
 <!-- @makeTrue="card=true; banner=true" :card="card" :banner="banner" -->
@@ -25,7 +25,7 @@
       <button @click="sortReturn()">되돌리기</button>
     </div>
     <div class="grid">
-      <Card @openModal="Modal = true; 클릭한물건= i" :물건="물건데이터[i]" v-for="(a,i) in 5" :key="i"/>
+      <Card @openModal="Modal = true; 클릭한물건= i" :물건="물건데이터[i]" v-for="(a,i) in 물건데이터.length" :key="i"/>
   </div>
   </div>
 
@@ -73,9 +73,27 @@
 </template>
 
 <script>
-import data from './assets/data'
 import Banner from './Banner.vue'
 import Card from './Card.vue'
+
+import { initializeApp } from "firebase/app";
+import { getDatabase, ref, child, get } from "firebase/database";
+
+
+const firebaseConfig = {
+    apiKey: "AIzaSyBbUlbvrvV2Uj-LR7bDHF0RJdYy5mSNqJw",
+    authDomain: "nyangdiz-b0211.firebaseapp.com",
+    databaseURL: "https://nyangdiz-b0211-default-rtdb.firebaseio.com",
+    projectId: "nyangdiz-b0211",
+    storageBucket: "nyangdiz-b0211.appspot.com",
+    messagingSenderId: "69242287095",
+    appId: "1:69242287095:web:8cc8fe4af4156f706cb4f2"
+  };
+  
+initializeApp(firebaseConfig);
+
+
+
 // import Modal from './Modal.vue'
 export default {
   name: 'App',
@@ -84,14 +102,33 @@ export default {
       login:false,
       개수: 1,
       클릭한물건: 0,
-      물건데이터: data,
-      물건데이터2: [...data],
+      물건데이터: [],
+      물건데이터2: [],
       Modal: false,
       card: false,
       banner: false,
       receipt: false,
       account: false,
     }
+  },
+  created () {
+    this.$nextTick(async function () {
+      console.log("hi2");
+      const dbRef = ref(getDatabase());
+      await get(child(dbRef, `goods`)).then((snapshot) => {
+        if (snapshot.exists()) {
+          console.log(snapshot.val());
+          this.물건데이터 = snapshot.val(); 
+          this.물건데이터2 = [...snapshot.val()]         
+        } else {
+          console.log("No data available");
+        }
+        }).catch((error) => {
+          console.error(error);
+        });
+      console.log("dat");
+      console.log(this.물건데이터);
+      })
   },
   watch :{
     개수(a){

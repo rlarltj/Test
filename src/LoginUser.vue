@@ -5,10 +5,10 @@
     <div clas s="fadeIn first">
     </div>
     <form>
-      <input type="text" id="login" class="fadeIn second" name="login" placeholder="아이디를 입력하세요">
-      <input type="text" id="password" class="fadeIn third" name="login" placeholder="비밀번호를 입력하세요">
-      <router-link to="/home"><input type="submit" class="fadeIn fourth" value="로그인" @click="$emit('loginTrue', true)" /></router-link>
+      <input type="text" id="login" class="fadeIn second" name="login" placeholder="아이디를 입력하세요" v-model="email">
+      <input type="text" id="password" class="fadeIn third" name="login" placeholder="비밀번호를 입력하세요" v-model="password">
     </form>
+      <button class="btn" v-on:click="signin">로그인</button>
     <div id="formFooter">
       <a class="underlineHover" href="join">회원가입</a>
     </div>
@@ -17,10 +17,52 @@
 </div>
 </template>
 <script>
+import { initializeApp } from "firebase/app";
+import { getAuth, signInWithEmailAndPassword} from "firebase/auth";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyBbUlbvrvV2Uj-LR7bDHF0RJdYy5mSNqJw",
+    authDomain: "nyangdiz-b0211.firebaseapp.com",
+    databaseURL: "https://nyangdiz-b0211-default-rtdb.firebaseio.com",
+    projectId: "nyangdiz-b0211",
+    storageBucket: "nyangdiz-b0211.appspot.com",
+    messagingSenderId: "69242287095",
+    appId: "1:69242287095:web:8cc8fe4af4156f706cb4f2"
+  };
+  
+initializeApp(firebaseConfig);
+const auth = getAuth();
+
+
   export default{
     props:{
       login: Boolean,
     },
+    data(){
+    return{
+      email : '',
+      password : ''
+      }
+    },
+    methods: {   
+    signin() {
+      signInWithEmailAndPassword(auth, this.email, this.password)
+        .then((userCredential) => {
+          // Signed in
+          const user = userCredential.user;
+          console.log(user);
+          alert("로그인 성공");
+          this.$emit('loginTrue', true)
+          this.$router.push({ path: 'home' })
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          console.log(errorCode + errorMessage)
+          alert("로그인 실패");
+        });
+      }
+      }
   }
 </script>
 
@@ -286,5 +328,23 @@ input[type=text]:placeholder {
 
 #icon {
   width:60%;
+}
+
+.btn {
+  background-color: #56baed;
+  border: none;
+  color: white;
+  padding: 15px 80px;
+  text-align: center;
+  text-decoration: none;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  text-transform: uppercase;
+  font-size: 13px;
+  box-shadow: 0 10px 30px 0 rgb(95 186 233 / 40%);
+  border-radius: 5px 5px 5px 5px;
+  margin: 5px 20px 40px 20px;
+  transition: all 0.3s ease-in-out;
 }
 </style>
